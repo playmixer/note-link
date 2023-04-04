@@ -1,0 +1,68 @@
+.favorite_edit__container {
+
+    min-width: 600px;
+    height: 100vh;
+}
+
+.favorite_edit__container .name {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.favorite_edit__container .url {
+    display: flex;
+    flex-direction: row;
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.favorite_edit__container .text {
+
+}
+
+.favorite_edit__add_tag {
+    display: flex;
+    flex-direction: row;
+    width: 200px;
+}
+
+.favorite_edit__top_menu {
+    padding: 5px;
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+
+.favorite_edit__top_menu .remove img {
+    width: 25px;
+    position: relative;
+    cursor: pointer;
+    transition-duration: .4s;
+}
+
+.favorite_edit__top_menu .remove img:hover {
+    transition-duration: .4s;
+    transform: rotateY(180deg);
+
+}
+
+.favorite_edit__body {
+    padding: 10px 30px;
+}
+.favorite_edit__body .url label {
+    margin-right: 10px;
+}
+
+.favorite_edit__body .url div {
+    width: 100%;
+}
+
+.favorite_edit__body .text {
+
+}
+
+.favorite_edit__body .text textarea {
+    height: 500px;
+}

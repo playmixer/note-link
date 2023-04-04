@@ -1,0 +1,33 @@
+.tag_item {
+    display: flex;
+    flex-direction: row;
+    background-color: var(--bs-success);
+    border-radius: 20px;
+    padding: 5px 10px;
+    color: white;
+}
+
+.tag_item img {
+    width: 20px;
+    position: relative;
+    right: -10px;
+    top: -1px;
+    margin-right: 10px;
+    filter: invert(1);
+    transition-duration: 0.2s;
+    cursor: pointer;
+}
+
+.tag_item img:hover {
+    width: 20px;
+    position: relative;
+    right: -10px;
+    top: -1px;
+    transform: rotate(90deg) ;
+    transition-duration: 0.2s;
+}
+
+.tag_item .remove {
+    padding: 0;
+    margin: 0;
+}

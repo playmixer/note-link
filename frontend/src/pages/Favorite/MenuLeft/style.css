@@ -1,0 +1,48 @@
+.menu_left {
+    width: 220px;
+    padding: 10px 10px;
+}
+
+.menu_left .menu_title {
+    font-size: 24px;
+    font-weight: 600;
+    padding-left: 10px;
+    margin-bottom: 5px;
+}
+
+.menu_left .menu_split {
+    width: 100%;
+    border-top: solid 1px gray;
+}
+
+.menu_left .menu_side .tags_list, .menu_left .menu_side .tags_control {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.menu_left .menu_side .btn {
+    margin-bottom: 5px;
+    border-radius: 20px;
+}
+
+.menu_left .menu_side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.menu_side .remove img, .menu_side .add img {
+    filter: invert(1);
+    padding: 0;
+    transition-duration: 0.2s;
+
+}
+
+.menu_side .remove:hover img, .menu_side .add:hover img {
+    filter: invert(1);
+    transition-duration: 0.2s;
+    transform: rotate(15deg);
+}

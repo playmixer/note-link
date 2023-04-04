@@ -1,0 +1,13 @@
+.item_url {
+    margin-right: 10px;
+}
+
+.item_title {
+    cursor: pointer;
+    width: 100%;
+    min-width: 400px;
+}
+
+.favorite_item {
+    min-height: 70px;
+}
