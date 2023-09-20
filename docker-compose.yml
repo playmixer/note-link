@@ -1,0 +1,19 @@
+version: '3'
+
+
+services:
+  save-note:
+    env_file:
+      - .env
+    build: .
+    container_name: save-note
+    restart: always
+    environment: 
+      SOURCE: dev
+      LOG_LEVEL: debug
+      
+    ports:
+      - "8081:8000"
+    volumes:
+      - ./logs:/app/logs
+

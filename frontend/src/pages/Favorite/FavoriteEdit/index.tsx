@@ -69,16 +69,14 @@ const FavoriteEdit = (p: EditFavoriteProps) => {
     const handleUpdateTags = (payload: { favoriteId: number, tags: string[] }) => {
         api.favorite.updTags(payload)
             .then(res => {
-                if (res.tags) {
-                    setState(s => ({
-                        ...s,
-                        favorite: {
-                            ...s.favorite,
-                            tags: res.tags
-                        }
-                    }))
-                    dispatch(doUpdate())
-                }
+                setState(s => ({
+                    ...s,
+                    favorite: {
+                        ...s.favorite,
+                        tags: res.tags || []
+                    }
+                }))
+                dispatch(doUpdate())
             })
     }
 
@@ -99,8 +97,13 @@ const FavoriteEdit = (p: EditFavoriteProps) => {
             favoriteId: state.favorite.id,
             tags: state.favorite.tags.filter(v => v.name != name).map(v => v.name),
         }
+        console.log(payload)
         handleUpdateTags(payload)
-        setState(s => ({...s, selectTag: ""}))
+        setState(s =>
+            {
+                console.log(s)
+                return {...s, selectTag: ""}
+            })
     }
 
     const onChangeFavorite = (e: any) => {
@@ -217,10 +220,12 @@ const FavoriteEdit = (p: EditFavoriteProps) => {
                 }
             </div>
             <div className="d-flex flex-row align-content-between w-100 mb-1">
-                {state.favorite.tags.map((v, i) => <div key={i} style={{marginRight: 5}}><Tag2
-                    onClose={() => removeTag(v.name)}>
-                    {v.name}
-                </Tag2></div>)}
+                {state.favorite.tags.map((v, i) => <div key={i} style={{marginRight: 5}}>
+                    <Tag2
+                        onClose={() => removeTag(v.name)}>
+                        {v.name}
+                    </Tag2>
+                </div>)}
                 <div className="favorite_edit__add_tag">
                     <Select
                         options={[{value: "", label: "--"}, ...state.tags

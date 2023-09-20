@@ -2,11 +2,12 @@ package api
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
 	"net/http"
 	"smartnote/internal/logger"
 	"smartnote/internal/models"
 	"strings"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func Test(ctx *fiber.Ctx) error {
@@ -65,15 +66,15 @@ func NewFavorite(ctx *fiber.Ctx) error {
 		logger.Error(err)
 		return ctx.JSON(responseError(err))
 	}
-	var tags []*models.Tag
+	var tags []models.Tag
 
 	for _, t := range payload.Tags {
-		tag, err := models.Tag{}.Get(t)
+		tag, err := models.GetTagByName(t)
 		if err != nil {
 			logger.Error(err)
 			return ctx.JSON(responseError(err))
 		}
-		tags = append(tags, &tag)
+		tags = append(tags, tag)
 	}
 
 	_, err = models.Favorite{}.New(payload.Name, tags, payload.Text, payload.Url)

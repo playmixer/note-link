@@ -2,27 +2,21 @@ package main
 
 import (
 	"fmt"
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/template/html"
 	"log"
 	"smartnote/internal/api"
 	"smartnote/internal/config"
 	"smartnote/internal/database"
 	"smartnote/internal/logger"
 	"smartnote/internal/models"
-)
 
-var (
-	appConfig config.AppConfig
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/template/html"
 )
 
 func init() {
-	conf, err := config.CreateConfig()
-	if err != nil {
-		logger.Error(err)
-	}
-	appConfig = conf
+	config.Init()
+	conf := config.App
 
 	db := database.Create(database.Config{
 		Username: conf.Database.Username,
@@ -39,6 +33,7 @@ func init() {
 }
 
 func main() {
+	logger.Info("App starting")
 	engine := html.New("./www", ".html")
 	app := fiber.New(fiber.Config{
 		Views: engine,
@@ -70,5 +65,5 @@ func main() {
 	apiHandler.Post("/tags", api.NewTag)
 	apiHandler.Delete("/tag/:id", api.DeleteTag)
 
-	log.Fatal(app.Listen(fmt.Sprintf(":%v", appConfig.Http.Port)))
+	log.Fatal(app.Listen(fmt.Sprintf(":%v", config.App.Http.Port)))
 }

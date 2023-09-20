@@ -2,10 +2,11 @@ package models
 
 import (
 	"fmt"
-	"gorm.io/gorm"
 	"log"
 	"smartnote/internal/logger"
 	"time"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -21,9 +22,9 @@ func Init(dbase *gorm.DB) {
 }
 
 type Tag struct {
-	ID        int64       `gorm:"primaryKey" json:"id"`
-	Name      string      `gorm:"not null;index:,unique" json:"name"`
-	Favorites []*Favorite `gorm:"many2many:_favorite_tag" json:"-"`
+	ID        int64      `gorm:"primaryKey" json:"id"`
+	Name      string     `gorm:"not null;index:,unique" json:"name"`
+	Favorites []Favorite `gorm:"many2many:_favorite_tag" json:"-"`
 }
 
 func (m Tag) All() ([]Tag, error) {
@@ -36,7 +37,7 @@ func (m Tag) All() ([]Tag, error) {
 	return tags, nil
 }
 
-func (m Tag) Get(name string) (Tag, error) {
+func GetTagByName(name string) (Tag, error) {
 	tag := Tag{}
 	result := db.Where("name = ?", name).Find(&tag)
 	if result.Error != nil {
@@ -87,12 +88,12 @@ type Favorite struct {
 	Url       string    `json:"url"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-	Tags      []*Tag    `gorm:"many2many:_favorite_tag;constraint:OnDelete:CASCADE" json:"tags"`
+	Tags      []Tag     `gorm:"many2many:_favorite_tag" json:"tags"`
 }
 
 func (m Favorite) Get(id int) (Favorite, error) {
 	var favorite = Favorite{
-		Tags: []*Tag{},
+		Tags: []Tag{},
 	}
 	err := db.Model(Favorite{}).Preload("Tags").Find(&favorite, id).Error
 	return favorite, err
@@ -101,18 +102,37 @@ func (m Favorite) Get(id int) (Favorite, error) {
 func (m Favorite) GetAll(tags []string) (*[]Favorite, error) {
 	var favorites []Favorite
 	res := db.Debug().Model(Favorite{}).Preload("Tags")
-	if len(tags) > 0 && tags[0] != "" {
-		res = res.Joins("join _favorite_tag ON _favorite_tag.favorite_id = favorites.id")
-		res = res.Joins("join tags ON tags.id = _favorite_tag.tag_id")
-		res = res.Where("tags.name in ?", tags)
-	}
+	// if len(tags) > 0 && tags[0] != "" {
+	// 	res = res.Joins("join _favorite_tag ON _favorite_tag.favorite_id = favorites.id")
+	// 	res = res.Joins("join tags ON tags.id = _favorite_tag.tag_id")
+	// 	res = res.Where("tags.name in ?", tags)
+	// }
 
 	res.Order("id desc").Find(&favorites)
 
-	return &favorites, nil
+	var result []Favorite
+	if len(tags) > 0 && tags[0] != "" {
+		for _, _tag := range tags {
+			for _, favorite := range favorites {
+				isFiltered := false
+				for _, t := range favorite.Tags {
+					if t.Name == _tag {
+						isFiltered = true
+					}
+				}
+				if isFiltered {
+					result = append(result, favorite)
+				}
+			}
+		}
+	} else {
+		result = favorites
+	}
+
+	return &result, nil
 }
 
-func (m Favorite) New(name string, tags []*Tag, text string, url string) (Favorite, error) {
+func (m Favorite) New(name string, tags []Tag, text string, url string) (Favorite, error) {
 	favorite := Favorite{
 		Name: name,
 		Tags: tags,
@@ -136,26 +156,26 @@ func (m Favorite) EditTags(id int, tags []string) (Favorite, error) {
 		logger.Error(err)
 		return favorite, nil
 	}
-	err = db.Exec(fmt.Sprintf("delete from %s where favorite_id = %v", TABLE_FAVORITE_TAG, id)).Error
+
+	err = db.Debug().Exec(fmt.Sprintf("delete from %s where favorite_id = %v", TABLE_FAVORITE_TAG, favorite.ID)).Error
 	if err != nil {
-		logger.Error(err)
 		return favorite, err
 	}
-	var _tags []*Tag
-	for _, tag := range tags {
-		_tag, err := Tag{}.Get(tag)
+
+	_tags := []Tag{}
+	for _, t := range tags {
+		tag, err := GetTagByName(t)
 		if err != nil {
-			logger.Error(err)
 			return favorite, err
 		}
-		_tags = append(_tags, &_tag)
+		_tags = append(_tags, tag)
 	}
 	favorite.Tags = _tags
-	err = db.Save(favorite).Error
+	err = db.Debug().Save(&favorite).Error
 	if err != nil {
-		logger.Error(err)
 		return favorite, err
 	}
+
 	return favorite, nil
 }
 

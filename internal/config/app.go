@@ -1,9 +1,15 @@
 package config
 
 import (
-	"encoding/json"
 	"os"
 	"smartnote/internal/logger"
+	"strconv"
+
+	"github.com/joho/godotenv"
+)
+
+var (
+	App AppConfig
 )
 
 type AppConfig struct {
@@ -20,19 +26,18 @@ type AppConfig struct {
 	} `json:"http"`
 }
 
-func CreateConfig() (AppConfig, error) {
-	buf, err := os.ReadFile("./config.json")
+func Init() {
+	var err error
+	godotenv.Load(".env")
+	App = AppConfig{}
+	App.Database.Host = os.Getenv("DB_HOST")
+	App.Database.Port = os.Getenv("DB_PORT")
+	App.Database.Name = os.Getenv("DB_NAME")
+	App.Database.Username = os.Getenv("DB_USERNAME")
+	App.Database.Password = os.Getenv("DB_PASSWORD")
+	App.Http.Port, err = strconv.Atoi(os.Getenv("HTTP_PORT"))
 	if err != nil {
 		logger.Error(err)
-		return AppConfig{}, err
+		App.Http.Port = 8080
 	}
-
-	conf := AppConfig{}
-	err = json.Unmarshal(buf, &conf)
-	if err != nil {
-		logger.Error(err)
-		return conf, err
-	}
-
-	return conf, nil
 }
