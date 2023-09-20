@@ -18,8 +18,8 @@ FROM node:18-alpine as front
 WORKDIR /app
 
 COPY ./frontend ./
-CMD ["yarn", "install"]
-CMD ["yarn", "build"]
+RUN yarn install
+RUN yarn build
 
 
 FROM ubuntu:latest
