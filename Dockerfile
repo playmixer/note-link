@@ -17,7 +17,13 @@ FROM node:18-alpine as front
 
 WORKDIR /app
 
-COPY ./frontend ./
+COPY ./frontend/@type ./@type
+COPY ./frontend/src ./src
+COPY ./frontend/public ./public
+COPY ./frontend/package.json ./
+COPY ./frontend/yarn.lock ./
+COPY ./frontend/tsconfig.json ./
+
 RUN yarn install
 RUN yarn build
 
