@@ -18,7 +18,7 @@ FROM node:18-alpine as front
 WORKDIR /app
 
 COPY ./frontend ./
-
+CMD ["yarn", "install"]
 CMD ["yarn", "build"]
 
 
