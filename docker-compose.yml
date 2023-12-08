@@ -2,18 +2,31 @@ version: '3'
 
 
 services:
-  save-note:
-    env_file:
-      - .env
-    build: .
-    container_name: save-note
+  notelink:
+    # env_file:
+    #   - .env
+    # build: .
+    image: playrexim/save-note:latest
+    container_name: notelink
     restart: always
     environment: 
       SOURCE: dev
       LOG_LEVEL: debug
+      DB_PORT: ${NOTE_DB_PORT}
+      DB_HOST: ${NOTE_DB_HOST}
+      DB_NAME: ${NOTE_DB_NAME}
+      DB_USERNAME: ${NOTE_DB_USERNAME}
+      DB_PASSWORD: ${NOTE_DB_PASSWORD}
+      HTTP_PORT: 8000
       
     ports:
       - "8081:8000"
     volumes:
       - ./logs:/app/logs
+    networks:
+      - note
+
+
+networks:
+  note:
 

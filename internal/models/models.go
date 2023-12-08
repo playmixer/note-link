@@ -28,7 +28,7 @@ type Tag struct {
 }
 
 func (m Tag) All() ([]Tag, error) {
-	var tags []Tag
+	var tags = []Tag{}
 	result := db.Order("name").Find(&tags)
 	if result.Error != nil {
 		return nil, result.Error

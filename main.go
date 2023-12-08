@@ -10,6 +10,7 @@ import (
 	"smartnote/internal/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/template/html"
 )
@@ -17,7 +18,6 @@ import (
 func init() {
 	config.Init()
 	conf := config.App
-
 	db := database.Create(database.Config{
 		Username: conf.Database.Username,
 		Password: conf.Database.Password,
@@ -38,6 +38,11 @@ func main() {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
+	app.Use(basicauth.New(basicauth.Config{
+		Users: map[string]string{
+			"mixer": "Jrcbutybev058507!",
+		},
+	}))
 
 	app.Static("/static", "./www/static")
 
@@ -65,5 +70,5 @@ func main() {
 	apiHandler.Post("/tags", api.NewTag)
 	apiHandler.Delete("/tag/:id", api.DeleteTag)
 
-	log.Fatal(app.Listen(fmt.Sprintf(":%v", config.App.Http.Port)))
+	log.Fatal(app.Listen(fmt.Sprintf("0.0.0.0:%v", config.App.Http.Port)))
 }
