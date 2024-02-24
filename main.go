@@ -10,7 +10,6 @@ import (
 	"smartnote/internal/models"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/template/html"
 )
@@ -38,19 +37,21 @@ func main() {
 	app := fiber.New(fiber.Config{
 		Views: engine,
 	})
-	app.Use(basicauth.New(basicauth.Config{
-		Users: map[string]string{
-			"mixer": "Jrcbutybev058507!",
-		},
-	}))
+	// app.Use(basicauth.New(basicauth.Config{
+	// 	Users: map[string]string{
+	// 		"mixer": "Jrcbutybev058507!",
+	// 	},
+	// }))
 
-	app.Static("/static", "./www/static")
+	subRoute := app.Group(config.App.MainRoute)
 
-	app.Get("/", func(ctx *fiber.Ctx) error {
+	subRoute.Static("/static", "./www/static")
+
+	subRoute.Get("/", func(ctx *fiber.Ctx) error {
 		return ctx.Render("index", fiber.Map{})
 	})
 
-	apiHandler := app.Group("/api/v0")
+	apiHandler := subRoute.Group("/api/v0")
 	//apiHandler.Use(func(ctx *fiber.Ctx) {
 	//	ctx.Accepts("application/json")
 	//})
@@ -70,5 +71,5 @@ func main() {
 	apiHandler.Post("/tags", api.NewTag)
 	apiHandler.Delete("/tag/:id", api.DeleteTag)
 
-	log.Fatal(app.Listen(fmt.Sprintf("0.0.0.0:%v", config.App.Http.Port)))
+	log.Fatal(app.Listen(fmt.Sprintf(":%v", config.App.Http.Port)))
 }

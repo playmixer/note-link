@@ -23,6 +23,7 @@ func Create(c Config) *gorm.DB {
 	var dialector gorm.Dialector
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		c.Username, c.Password, c.Host, c.Port, c.Name)
+	logger.Info("database dsn " + dsn)
 	dialector = mysql.Open(dsn)
 
 	db, err := gorm.Open(dialector, &gorm.Config{})
