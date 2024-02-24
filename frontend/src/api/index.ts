@@ -1,4 +1,4 @@
-const API = process.env.NODE_ENV === "development" ? "http://localhost:8000/api/v0" : "/api/v0";
+const API = process.env.NODE_ENV === "development" ? "http://localhost:8000/api/v0" : process.env.PUBLIC_URL+"/api/v0";
 
 const _fetch = async (method = "GET", url = "", data = {}): Promise<Response> => {
     let content: any = {

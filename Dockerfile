@@ -14,7 +14,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /build/app
 
 
 FROM node:18-alpine as front
-
+ARG PUBLIC_URL=/note
 WORKDIR /app
 
 COPY ./frontend/@type ./@type
